@@ -70,8 +70,6 @@ class StanzaExpress {
 				}
 			}]
 		};
-		console.log(webpack.config)
-
 	}
 
 
