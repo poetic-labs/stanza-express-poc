@@ -10,91 +10,91 @@ const generateHTML = require('./base-html.js');
  * behavior */
 
 class StanzaExpress {
-	/* Constructor should setup the port number and do any preconfiguration
-	 * during this part it should also search for any plugins that depend on it
-	 * and pass itself to the other extensions if they are registered as
-	 * stanza-express or whatever keyword we choose */
+  /* Constructor should setup the port number and do any preconfiguration
+   * during this part it should also search for any plugins that depend on it
+   * and pass itself to the other extensions if they are registered as
+   * stanza-express or whatever keyword we choose */
   constructor() {
     this.port = 3000;
   }
 
-	/* Register is function that is found by its dependencies and is passed an
-	 * instance of the class for each thing it depends on.  Currently this is only
-	 * webpack. */
+  /* Register is function that is found by its dependencies and is passed an
+   * instance of the class for each thing it depends on.  Currently this is only
+   * webpack. */
   register(keyword, instance) {
-		switch(keyword) {
-			case 'stanza-webpack': this.setupWebpackConfig(instance); break;
-			default: console.log('nothing was found');
-		}
+    switch(keyword) {
+      case 'stanza-webpack': this.setupWebpackConfig(instance); break;
+      default: console.log('nothing was found');
+    }
   }
 
   requestCompiler(keyword, instance) {
-		switch(keyword) {
-			case 'stanza-webpack': this.setupCompilerHooks(instance); break;
-			default: console.log('nothing was found');
-		}
-	}
+    switch(keyword) {
+      case 'stanza-webpack': this.setupCompilerHooks(instance); break;
+      default: console.log('nothing was found');
+    }
+  }
 
-	setupCompilerHooks(webpack) {
-		webpack.compiler.plugin('after-emit', (compilation, callback) => {
-			callback();
-			this.restart();
-		});
-	}
+  setupCompilerHooks(webpack) {
+    webpack.compiler.plugin('after-emit', (compilation, callback) => {
+      callback();
+      this.restart();
+    });
+  }
 
-	setupWebpackConfig(webpack) {
+  setupWebpackConfig(webpack) {
     /* Need to setup the webpack config to work with defined convention.  This
-		 * should have two entry points and two created bundles that are pushed into
-		 * the "build" folder */
-		webpack.config.entry = {
-			client: './client/index.jsx',
-			server: './server/index.js'
-		};
+     * should have two entry points and two created bundles that are pushed into
+     * the "build" folder */
+    webpack.config.entry = {
+      client: './client/index.jsx',
+      server: './server/index.js'
+    };
 
-		webpack.config.output = {
-			path: path.join(resolveRoot('stanza'), "build"),
-			filename: "[name].entry.js",
-		};
+    webpack.config.output = {
+      path: path.join(resolveRoot('stanza'), "build"),
+      filename: "[name].entry.js",
+    };
 
     webpack.config.resolve = {
-			extensions: ['', '.js', '.jsx']
-		};
+      extensions: ['', '.js', '.jsx']
+    };
 
-		webpack.config.module = {
-			loaders: [{
-				test: /\.jsx?$/,
-				loader: 'babel-loader',
-				exclude: /node_modules/,
-				query: {
-					presets: ['react', 'es2015']
-				}
-			}]
-		};
-	}
+    webpack.config.module = {
+      loaders: [{
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+        query: {
+          presets: ['react', 'es2015']
+        }
+      }]
+    };
+  }
 
 
   run() {
-		app.get('/hello', (req, res) => {
-			res.status(200).send('hello')
-		})
-		app.get('/js', (req, res) => {
-			res.sendFile(`${resolveRoot('stanza')}/build/client.entry.js`);
-		});
-		app.get('*', (req, res) => {
-			res.status(200).send(generateHTML());
-		});
+    app.get('/hello', (req, res) => {
+      res.status(200).send('hello')
+    })
+    app.get('/js', (req, res) => {
+      res.sendFile(`${resolveRoot('stanza')}/build/client.entry.js`);
+    });
+    app.get('*', (req, res) => {
+      res.status(200).send(generateHTML());
+    });
     this.server = app.listen(this.port);
     console.log('server started on port 3000');
   }
 
   restart() {
     console.log('restarting stanza server');
-		if (this.server) {
+    if (this.server) {
       this.server.close();
-		}
+    }
 
-		this.run();
-	}
+    this.run();
+  }
 }
 
 module.exports = new StanzaExpress();

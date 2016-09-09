@@ -1,17 +1,17 @@
 module.exports = function generateHtml() {
-	return (`
-		<!DOCTYPE html>
-		<html>
-		<head>
-		<script src="/js"></script>
-		<meta charset="UTF-8">
-		<title>Title of the document</title>
-		</head>
+  return (`
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <script src="/js"></script>
+    <meta charset="UTF-8">
+    <title>Title of the document</title>
+    </head>
 
-		<body>
+    <body>
       <div id="render-target"></div>
-		</body>
+    </body>
 
-		</html>
-	`);
+    </html>
+  `);
 }
