@@ -1,4 +1,4 @@
-module.exports = function generateHtml() {
+module.exports = function generateHtml(meta) {
   return (`
     <!DOCTYPE html>
     <html>
